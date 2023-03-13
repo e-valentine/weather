@@ -1,0 +1,44 @@
+using HtmlAgilityPack;
+using System.Linq;
+namespace webscraping2electricboogaloo
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            List<string> days = new List<string>();
+            List<string> highs = new List<string>();
+            List<string> lows = new List<string>();
+            var date = DateTime.Now.ToString("d");
+            string DAY = date[0].ToString() + date[1].ToString();
+            Console.WriteLine(DAY);
+            HtmlWeb web = new HtmlWeb();
+            HtmlDocument doc2 = web.Load("https://weather.com/en-GB/weather/today/l/0ea58c060f0f6522c01d626fde93ab4bff38410da8de58c9068e373327d128e91bdb47028a98b93188526f6bdecc918c");
+            IEnumerable<HtmlNode> nodes = doc2.DocumentNode.Descendants(0)
+                .Where(n => n.HasClass("DailyWeatherCard--TableWrapper--2bB37"));
+            List<string> info = new List<string>();
+            foreach (var item in nodes)
+            {
+                info.Add(item.InnerText);
+            }
+            foreach (var item in info)
+            {
+                var a = item.Split("%");
+                foreach (var b in a)
+                {
+                    var newlis = b.Split("°");
+                    var tempday = newlis[0].ToString();
+                    if (tempday.Contains("Today"))
+                    {
+                        var low = (tempday.Last()).ToString() + (tempday[^2].ToString());
+                        Console.WriteLine(newlis[0].ToString());
+                        Console.WriteLine(low);
+                    }
+
+                }
+
+            }
+
+        }
+    }
+}
