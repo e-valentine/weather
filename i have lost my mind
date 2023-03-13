@@ -1,12 +1,4 @@
-using HtmlAgilityPack;
-using System.Linq;
-namespace webscraping2electricboogaloo
-{
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            List<string> days = new List<string>();
+uList<string> days = new List<string>();
             List<string> highs = new List<string>();
             List<string> lows = new List<string>();
             var date = DateTime.Now.ToString("d");
@@ -30,15 +22,45 @@ namespace webscraping2electricboogaloo
                     var tempday = newlis[0].ToString();
                     if (tempday.Contains("Today"))
                     {
-                        var low = (tempday.Last()).ToString() + (tempday[^2].ToString());
-                        Console.WriteLine(newlis[0].ToString());
-                        Console.WriteLine(low);
+                        string low = "";
+                        string high = "";
+                        var length = tempday.Count();
+                        if(length % 2==0)
+                        {
+                            low = (tempday.Last()).ToString();
+                            high = (tempday[5].ToString()) + (tempday[6].ToString());
+                        }
+                        else
+                        {
+                            low = (tempday[^2].ToString()) + (tempday.Last()).ToString();
+                            high = (tempday[5].ToString()) + (tempday[6].ToString());
+                        }
+                        lows.Add(low);
+                        highs.Add(high);
+                        days.Add("Today");
+                    }
+                    else
+                    {
+                        string day = tempday[0].ToString() + tempday[1].ToString() + tempday[2].ToString() + tempday[3].ToString() + tempday[4].ToString() + tempday[5].ToString();
+                        string low = "";
+                        string high = "";
+                        var length = tempday.Count();
+                        if (length % 2 == 0)
+                        {
+                            low = (tempday.Last()).ToString();
+                            high = (tempday[6].ToString()) + (tempday[7].ToString());
+                        }
+                        else
+                        {
+                            low = (tempday[^2].ToString()) + (tempday.Last()).ToString();
+                            high = (tempday[6].ToString()) + (tempday[7].ToString());
+                        }
+                        lows.Add(low);
+                        highs.Add(high);
+                        days.Add(day);
+
                     }
 
                 }
 
             }
-
-        }
-    }
-}
