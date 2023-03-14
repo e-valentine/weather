@@ -1,0 +1,101 @@
+using HtmlAgilityPack;
+using System.Linq;
+using System.Collections;
+namespace webscraping2electricboogaloo
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            List<string> days = new List<string>();
+            List<string> highs = new List<string>();
+            List<string> lows = new List<string>();
+            List<string> rainchance = new List<string>();
+            var date = DateTime.Now.ToString("d");
+            string DAY = date[0].ToString() + date[1].ToString(); //obtains the current date
+            string month = date[3].ToString() + date[4].ToString(); //obtains the current month
+            Console.WriteLine(DAY);
+            Console.WriteLine(month);
+            HtmlWeb web = new HtmlWeb();
+            HtmlDocument doc2 = web.Load("https://weather.com/en-GB/weather/today/l/0ea58c060f0f6522c01d626fde93ab4bff38410da8de58c9068e373327d128e91bdb47028a98b93188526f6bdecc918c");
+            IEnumerable<HtmlNode> nodes = doc2.DocumentNode.Descendants(0)
+                .Where(n => n.HasClass("DailyWeatherCard--TableWrapper--2bB37"));
+            int count = 0;
+            List<string> info = new List<string>();
+
+            foreach (var item in nodes)
+            {
+                info.Add(item.InnerText);
+            }
+            foreach (var item in info)
+            {
+                var splitData = item.Split("%");
+                foreach (var line in splitData)
+                {
+                    var newlis = line.Split("°");
+                    var tempday = newlis[0].ToString();
+                    
+                    foreach(string weatherinfo in newlis)
+                    {
+
+                        if (count == 0)
+                        {
+                            //Console.WriteLine(weatherinfo.ToString());
+                            int length = weatherinfo.Length;
+                            if (length % 2 == 0)
+                            {
+                                Console.WriteLine(weatherinfo);
+                                int position = length - 1;
+                                weatherinfo.Remove(position);
+                                string day = weatherinfo.Substring(0, position);
+                                string hightemp = weatherinfo.Substring(position);
+                                Console.WriteLine(day);
+                                Console.WriteLine(hightemp);
+                                count++;
+                            }
+                            else
+                            {
+                                int length2 = weatherinfo.Length;
+                                if (length2 % 2 == 1)
+                                {
+                                    Console.WriteLine(weatherinfo);
+                                    int position = length2 - 2;
+                                    weatherinfo.Remove(position);
+                                    string day = weatherinfo.Substring(0, position);
+                                    string hightemp = weatherinfo.Substring(position,position+1);
+                                    days.Add(day);
+                                    highs.Add(hightemp);
+                                    count++;
+                                }
+                            }
+                        }
+                        else if (count==3||count==6||count==9||count==12)
+                        {
+                            int length = weatherinfo.Length;
+
+                            int temporaryDate = (int.Parse(DAY))+1;
+                            int temporaryMonth = int.Parse(month);
+                            if (temporaryDate == 32 && (temporaryMonth == 01|| temporaryMonth == 03 || temporaryMonth == 05 || temporaryMonth == 07 || temporaryMonth == 08|| temporaryMonth == 10 || temporaryMonth == 12))
+                            {
+                                DAY = 01.ToString();
+                                month = (temporaryMonth+1).ToString();
+
+                            }
+                            else if (temporaryDate==31&&(temporaryMonth == 04 || temporaryMonth == 06 || temporaryMonth == 09 || temporaryMonth == 11))
+                            {
+                                DAY = 01.ToString();
+                                month = (temporaryMonth + 1).ToString();
+                            }
+                            else if (temporaryDate==29&&temporaryMonth==02)
+                            {
+                                DAY = 01.ToString();
+                                month = (temporaryMonth + 1).ToString();
+                            }
+                            
+                        }
+                    } 
+                }
+            }
+        }
+    }
+}
