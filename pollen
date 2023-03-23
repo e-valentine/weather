@@ -1,0 +1,15 @@
+using htmlagilitypack;
+
+
+string usingPollenURL = "https://weather.com/en-GB/forecast/allergy/l/ae8230efd4bc57fdf721a02c7eb2b88c56aa6e71d73666328e33af3ea2039032132e24ae91b6a07862c5091a9d95a4b8";
+HtmlWeb web = new HtmlWeb();
+HtmlDocument doc2 = web.Load(usingPollenURL);
+var pollNodes = doc2.DocumentNode.SelectNodes("//li");
+List<string> PollenInfo = new List<string>();
+foreach (var item in pollNodes)
+{
+    if (item.HasClass("PollenBreakdown--outlookLevel--2rf6z"))
+    { PollenInfo.Add(item.InnerText); }
+}
+foreach (var item in PollenInfo)
+{ Console.WriteLine(item); }
